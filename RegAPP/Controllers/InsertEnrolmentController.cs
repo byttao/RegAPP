@@ -28,6 +28,7 @@ namespace RegAPP.Controllers
             }
             return GetMd5Hash(str).ToUpper();
         }
+
         public static string GetMd5Hash(string input)
         {
             if (input == null)
