@@ -53,7 +53,7 @@ namespace RegAPP.Controllers
             // 返回十六进制字符串 
             return sBuilder.ToString();
         }
-        [HttpPost]
+        //[HttpPost]
         public string InsertEnrolment([FromBody]UpdataMachine users)
         {
             DataSet ds = new DataSet();

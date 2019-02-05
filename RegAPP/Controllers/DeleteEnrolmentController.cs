@@ -15,7 +15,7 @@ namespace RegAPP.Controllers
 
         string sqliteFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/DSqlite.db");
 
-        [HttpPost]
+        //[HttpPost]
         public string DeleteEnrolment([FromBody]UpdataMachine users)
         {
             DataSet ds = new DataSet();

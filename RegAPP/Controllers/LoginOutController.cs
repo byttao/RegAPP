@@ -11,46 +11,30 @@ using System.Web.Http;
 
 namespace RegAPP.Controllers
 {
-    public class GetAuthorizationController : ApiController
+    public class LoginOutController : ApiController
     {
-        string sqliteFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/DSqlite.db");
-
+        // POST api/<controller>
         [HttpPost]
-        public string GetAuthorization([FromBody]MachineInfo machineInfo)
+        public string LoginOut([FromBody]MachineInfo machineInfo)
         {
-            Boolean auth = false;
             SQLiteParameter[] parameters;
             StringBuilder sb = new StringBuilder();
-            sb.Append("Select Enrolment.LoginTime, Office.OfficeId, Enrolment.MachineCode From Enrolment ");
+            sb.Append("Select Enrolment.LoginTime, Office.OfficeId From Enrolment ");
             sb.Append("Inner Join Office On Office.OfficeId = Enrolment.OfficeId ");
             sb.Append("Inner Join OfficeVersion On Office.OfficeId = OfficeVersion.OfficeId ");
             sb.Append("Where Office.Name = @Officename and ");
             sb.Append("Enrolment.UserName = @UserName and ");
-            sb.Append("OfficeVersion.Version = @Version");
+            sb.Append("OfficeVersion.Version = @Version and ");
+            sb.Append("Enrolment.MachineCode = @MachineCode");
             parameters = new SQLiteParameter[]
             {
                 SQLiteHelper.MakeSQLiteParameter("@Officename", DbType.String, machineInfo.Officename),
                 SQLiteHelper.MakeSQLiteParameter("@UserName", DbType.String, machineInfo.UserName),
-                SQLiteHelper.MakeSQLiteParameter("@Version", DbType.String, machineInfo.Version)
+                SQLiteHelper.MakeSQLiteParameter("@Version", DbType.String, machineInfo.Version),
+                SQLiteHelper.MakeSQLiteParameter("@MachineCode", DbType.String, machineInfo.MachineCode)
             };
             DataSet ds = SQLiteHelper.Query(sb.ToString(), parameters);
-
-            if (ds.Tables[0].Rows.Count == 0)
-            {
-                return "登陆信息有误，请重试";
-            }
-
-            DateTime dateTime = DateTime.Parse(ds.Tables[0].Rows[0][0].ToString());
-            if (dateTime.AddHours(1) < DateTime.Now)
-            {
-                auth = true;
-            }
-            else if (ds.Tables[0].Rows[0][2].ToString() == machineInfo.MachineCode)
-            {
-                auth = true;
-            }
-
-            if (auth)
+            if (ds.Tables[0].Rows.Count>0)
             {
                 string officeid = ds.Tables[0].Rows[0][1].ToString();
                 sb = new StringBuilder();
@@ -61,20 +45,18 @@ namespace RegAPP.Controllers
                 sb.Append("and OfficeId=@OfficeId ");
                 parameters = new SQLiteParameter[]
                 {
-                    SQLiteHelper.MakeSQLiteParameter("@LoginTime", DbType.DateTime, DateTime.Now),
+                    SQLiteHelper.MakeSQLiteParameter("@LoginTime", DbType.DateTime, DateTime.Now.AddMinutes(-55)),
                     SQLiteHelper.MakeSQLiteParameter("@MachineCode", DbType.String, machineInfo.MachineCode),
                     SQLiteHelper.MakeSQLiteParameter("@UserName", DbType.String, machineInfo.UserName),
                     SQLiteHelper.MakeSQLiteParameter("@OfficeId", DbType.Int16, int.Parse(officeid))
                 };
                 if (SQLiteHelper.ExecuteSql(sb.ToString(), parameters) > 0)
                 {
-                    return "登陆成功";
+                    return "登出成功，请5分钟后在其他电脑上重新登陆。";
                 }
-
-                return "更新失败";
+                return "退出失败";
             }
-
-            return "该账号1小时前在其他电脑登陆过！请在原设备登出或等待1小时后登陆";
+            return "未在本机登陆，无需退出";
         }
 
     }

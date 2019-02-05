@@ -32,6 +32,7 @@
     {
         public string Officename { get; set; }
         public string MachineCode { get; set; }
+        public string UserName { get; set; }
         public string Version { get; set; }
     }
     public class UpdataMachine

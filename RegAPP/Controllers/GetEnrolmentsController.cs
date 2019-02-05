@@ -15,7 +15,7 @@ namespace RegAPP.Controllers
     {
         string sqliteFilePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/DSqlite.db");
 
-        [HttpPost]
+        //[HttpPost]
         public IEnumerable<Enrolment> GetEnrolments([FromBody]Office users)
         {
             DataSet ds = new DataSet();
