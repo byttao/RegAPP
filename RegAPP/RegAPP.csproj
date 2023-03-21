@@ -101,6 +101,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DeleteEnrolmentController.cs" />
     <Compile Include="Controllers\GetAuthorizationController.cs" />
+    <Compile Include="Controllers\GetAuthorizationV2Controller.cs" />
     <Compile Include="Controllers\GetEnrolmentsController.cs" />
     <Compile Include="Controllers\InsertEnrolmentController.cs" />
     <Compile Include="Controllers\LoginOutController.cs" />
